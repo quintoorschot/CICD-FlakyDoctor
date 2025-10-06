@@ -1,0 +1,60 @@
+Picked up JAVA_TOOL_OPTIONS: --add-opens=java.base/java.lang=ALL-UNNAMED
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -------------------------< com.example:my-app >-------------------------
+[INFO] Building my-app 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> idflakies:2.0.0:detect (default-cli) > test-compile @ my-app >>>
+[INFO] 
+[INFO] --- resources:3.0.2:resources (default-resources) @ my-app ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /home/q/Documents/thesis/my-app/src/main/resources
+[INFO] 
+[INFO] --- compiler:3.8.0:compile (default-compile) @ my-app ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.0.2:testResources (default-testResources) @ my-app ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /home/q/Documents/thesis/my-app/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.8.0:testCompile (default-testCompile) @ my-app ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] <<< idflakies:2.0.0:detect (default-cli) < test-compile @ my-app <<<
+[INFO] 
+[INFO] 
+[INFO] --- idflakies:2.0.0:detect (default-cli) @ my-app ---
+INFO: No timeout specified. Using randomize.rounds: 10
+INFO: ROUNDS_CALCULATED: Giving com.example:my-app:1.0-SNAPSHOT 10 rounds to run for random-class-method
+INFO: Locating tests...
+INFO: Located 6 tests. Time taken: 0.07400012016296387 seconds
+INFO: Using original order in path: /home/q/Documents/thesis/my-app/.dtfixingtools/original-order
+INFO: Getting original order by parsing logs. ignoreExisting set to: false
+INFO: Using original order in path: /home/q/Documents/thesis/my-app/.dtfixingtools/original-order
+[INFO] Getting original results (6 tests).
+INFO: Created dependent test detector (class edu.illinois.cs.dt.tools.detection.detectors.RandomDetector).
+Verified com.example.AppTest.TestC, status: expected PASS, got PASS
+Verified com.example.AppTest.TestC, status: expected ERROR, got ERROR
+Verified com.example.AppTest.TestA, status: expected PASS, got PASS
+Verified com.example.AppTest.TestA, status: expected ERROR, got ERROR
+[INFO] Found 2 tests in round 1 of 10 (0.0 seconds elapsed (3.2 total), 0.0 seconds remaining).
+[INFO] Found 0 tests in round 2 of 10 (0.0 seconds elapsed (3.9 total), 0.0 seconds remaining).
+[INFO] Found 0 tests in round 3 of 10 (0.7 seconds elapsed (4.4 total), 1.6 seconds remaining).
+[INFO] Found 0 tests in round 4 of 10 (1.2 seconds elapsed (4.9 total), 1.8 seconds remaining).
+[INFO] Found 0 tests in round 5 of 10 (1.7 seconds elapsed (5.3 total), 1.7 seconds remaining).
+[INFO] Found 0 tests in round 6 of 10 (2.1 seconds elapsed (5.7 total), 1.4 seconds remaining).
+[INFO] Found 0 tests in round 7 of 10 (2.5 seconds elapsed (6.1 total), 1.1 seconds remaining).
+[INFO] Found 0 tests in round 8 of 10 (2.9 seconds elapsed (6.6 total), 0.7 seconds remaining).
+[INFO] Found 0 tests in round 9 of 10 (3.4 seconds elapsed (6.9 total), 0.4 seconds remaining).
+[INFO] Found 0 tests in round 10 of 10 (3.7 seconds elapsed (7.3 total), 0.0 seconds remaining).
+
+[INFO] Found 2 tests, writing list to /home/q/Documents/thesis/my-app/.dtfixingtools/detection-results/list.txt and dt lists to /home/q/Documents/thesis/my-app/.dtfixingtools/detection-results/flaky-lists.json
+TRY_COPY_ALL_FAILING_TEST_OUTPUT
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  10.146 s
+[INFO] Finished at: 2025-10-03T12:30:11+02:00
+[INFO] ------------------------------------------------------------------------
