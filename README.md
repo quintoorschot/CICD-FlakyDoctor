@@ -45,6 +45,7 @@ Based on the paper *“Neurosymbolic Repair of Test Flakiness”* (ISSTA 2024) b
 - 💻 [FlakyDoctor Repository](https://github.com/Intelligent-CAT-Lab/FlakyDoctor)
 
 <p align="center">
-  <img src="https://www.ru.nl/sites/default/files/2023-08/RU_logo_NL.png" alt="Radboud University Logo" width="50%"/>
+  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQFv-XbvBJJdW8p1lgMioZvG4ypX46VVoYIrg&s" alt="Radboud University Logo" width="20%"/>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNYyQeJ-hmVjvrWS2an2tsnddCQvqsDu93uw&s" alt="Sogeti logo" width="35%"/>
 </p>
