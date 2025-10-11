@@ -1,62 +1,0 @@
-Picked up JAVA_TOOL_OPTIONS: --add-opens=java.base/java.lang=ALL-UNNAMED
-[INFO] Scanning for projects...
-[INFO] 
-[INFO] -------------------------< com.example:my-app >-------------------------
-[INFO] Building my-app 1.0-SNAPSHOT
-[INFO]   from pom.xml
-[INFO] --------------------------------[ jar ]---------------------------------
-[INFO] 
-[INFO] >>> idflakies:2.0.1-SNAPSHOT:minimize (default-cli) > test-compile @ my-app >>>
-[INFO] 
-[INFO] --- resources:3.0.2:resources (default-resources) @ my-app ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /home/q/Documents/thesis/my-app/src/main/resources
-[INFO] 
-[INFO] --- compiler:3.8.0:compile (default-compile) @ my-app ---
-[INFO] Nothing to compile - all classes are up to date
-[INFO] 
-[INFO] --- resources:3.0.2:testResources (default-testResources) @ my-app ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /home/q/Documents/thesis/my-app/src/test/resources
-[INFO] 
-[INFO] --- compiler:3.8.0:testCompile (default-testCompile) @ my-app ---
-[INFO] Nothing to compile - all classes are up to date
-[INFO] 
-[INFO] <<< idflakies:2.0.1-SNAPSHOT:minimize (default-cli) < test-compile @ my-app <<<
-[INFO] 
-[INFO] 
-[INFO] --- idflakies:2.0.1-SNAPSHOT:minimize (default-cli) @ my-app ---
-INFO: Creating minimizers for file: /home/q/Documents/thesis/my-app/.dtfixingtools/detection-results/flaky-lists.json
-INFO: Using original order in path: /home/q/Documents/thesis/my-app/.dtfixingtools/original-order
-INFO: Reading dependent test list from /home/q/Documents/thesis/my-app/.dtfixingtools/detection-results/flaky-lists.json
-Verified com.example.AppTest.TestC, status: expected PASS, got PASS
-Verified com.example.AppTest.TestC, status: expected ERROR, got ERROR
-INFO: Test is victim. Result of running test in isolation is: PASS
-INFO: Running minimizer for: com.example.AppTest.TestC (expected result in this order: ERROR)
-INFO: Ran minimizer, dependencies: [com.example.AppTest.TestD]
-INFO: FIRST POLLUTER: Found first polluter [com.example.AppTest.TestD] for dependent test com.example.AppTest.TestC in 1.0750000476837158 seconds.
-INFO: Looking for cleaners for: com.example.AppTest.TestC
-INFO: Using original order in path: /home/q/Documents/thesis/my-app/.dtfixingtools/original-order
-INFO: Found 7 cleaner group candidates.
-Trying group 0 of 7 (found 0 so far)Trying group 1 of 7 (found 0 so far)Trying group 2 of 7 (found 0 so far)Trying group 3 of 7 (found 0 so far)Trying group 4 of 7 (found 0 so far)Trying group 5 of 7 (found 0 so far)Trying group 6 of 7 (found 0 so far)INFO: Found 0 cleaner groups.
-INFO: com.example.AppTest.TestC has 0 cleaners: []
-INFO: Remaining tests no longer match expected: [com.example.AppTest.TestB, com.example.AppTest.TestA, com.example.AppTest.add_handlesNegatives, com.example.AppTest.add_twoNumbers_returnsSum]
-Verifying 1 of 1. Running check 1 of 2.Verifying 1 of 1. Running check 2 of 2.
-Verified com.example.AppTest.TestA, status: expected PASS, got PASS
-Verified com.example.AppTest.TestA, status: expected ERROR, got ERROR
-INFO: Test is victim. Result of running test in isolation is: PASS
-INFO: Running minimizer for: com.example.AppTest.TestA (expected result in this order: ERROR)
-INFO: Ran minimizer, dependencies: [com.example.AppTest.TestB]
-INFO: FIRST POLLUTER: Found first polluter [com.example.AppTest.TestB] for dependent test com.example.AppTest.TestA in 0.36999988555908203 seconds.
-INFO: Looking for cleaners for: com.example.AppTest.TestA
-INFO: Using original order in path: /home/q/Documents/thesis/my-app/.dtfixingtools/original-order
-INFO: Found 7 cleaner group candidates.
-Trying group 0 of 7 (found 0 so far)Trying group 1 of 7 (found 0 so far)Trying group 2 of 7 (found 0 so far)Trying group 3 of 7 (found 0 so far)Trying group 4 of 7 (found 0 so far)Trying group 5 of 7 (found 0 so far)Trying group 6 of 7 (found 0 so far)INFO: Found 0 cleaner groups.
-INFO: com.example.AppTest.TestA has 0 cleaners: []
-Verifying 1 of 1. Running check 1 of 2.Verifying 1 of 1. Running check 2 of 2.
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time:  20.196 s
-[INFO] Finished at: 2025-10-03T12:30:33+02:00
-[INFO] ------------------------------------------------------------------------

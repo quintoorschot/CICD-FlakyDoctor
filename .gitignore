@@ -1,0 +1,5 @@
+/venv
+/FlakyDoctor/projects
+/FlakyDoctor/good_patches
+/FlakyDoctor/results
+protobuf-2.5.0
