@@ -1,0 +1,82 @@
+++ date
++ echo '* STARTING' at Sat Oct 11 02:28:34 PM CEST 2025
+* STARTING at Sat Oct 11 02:28:34 PM CEST 2025
+++ git rev-parse HEAD
++ echo '* REPO' VERSION ff5af7eb65438d76e0378ee6454517cd95b60bdb
+* REPO VERSION ff5af7eb65438d76e0378ee6454517cd95b60bdb
+++ cat /home/q/Documents/new/project.csv
++ for info in $(cat ${input_csv})
+++ echo https://github.com/quintoorschot/test-repo,354bee28e97025b0c489ef9b0a9997d882ef4417,.
+++ cut -d, -f1
++ URL=https://github.com/quintoorschot/test-repo
+++ echo https://github.com/quintoorschot/test-repo,354bee28e97025b0c489ef9b0a9997d882ef4417,.
+++ cut -d, -f2
++ SHA=354bee28e97025b0c489ef9b0a9997d882ef4417
+++ echo https://github.com/quintoorschot/test-repo,354bee28e97025b0c489ef9b0a9997d882ef4417,.
+++ cut -d, -f3
++ MODULE=.
++ url=https://github.com/quintoorschot/test-repo
++ sha=354bee28e97025b0c489ef9b0a9997d882ef4417
++ module=.
++ project=test-repo
++ cd /home/q/Documents/new/FlakyDoctor-CICD/FlakyDoctor/projects
++ [[ ! -d 354bee28e97025b0c489ef9b0a9997d882ef4417 ]]
++ echo Directory 354bee28e97025b0c489ef9b0a9997d882ef4417 does not exist in /home/q/Documents/new/FlakyDoctor-CICD/FlakyDoctor/projects
+Directory 354bee28e97025b0c489ef9b0a9997d882ef4417 does not exist in /home/q/Documents/new/FlakyDoctor-CICD/FlakyDoctor/projects
++ mkdir -p 354bee28e97025b0c489ef9b0a9997d882ef4417
++ cd 354bee28e97025b0c489ef9b0a9997d882ef4417
++ [[ ! -d test-repo ]]
++ echo Directory test-repo does not exist in /home/q/Documents/new/FlakyDoctor-CICD/FlakyDoctor/projects/354bee28e97025b0c489ef9b0a9997d882ef4417
+Directory test-repo does not exist in /home/q/Documents/new/FlakyDoctor-CICD/FlakyDoctor/projects/354bee28e97025b0c489ef9b0a9997d882ef4417
++ git clone https://github.com/quintoorschot/test-repo
+Cloning into 'test-repo'...
++ cd test-repo
++ git stash
+No local changes to save
++ git checkout 354bee28e97025b0c489ef9b0a9997d882ef4417
+Note: switching to '354bee28e97025b0c489ef9b0a9997d882ef4417'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at 354bee2 update
++ install
++ echo 'Java version 8'
+Java version 8
++ export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
++ JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
++ export PATH=/usr/lib/jvm/java-1.8.0-openjdk-amd64/bin:/home/q/Documents/thesis/venv/bin:/usr/lib/jvm/java-11-openjdk-amd64/bin:/usr/bin:/home/q/.local/bin:/usr/lib/jvm/java-11-openjdk-amd64/bin:/usr/bin:/home/q/.sdkman/candidates/maven/current/bin:/home/q/.sdkman/candidates/java/current/bin:/opt/maven/bin:/home/q/.local/bin:/opt/maven/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/q/.config/Code/User/globalStorage/github.copilot-chat/debugCommand
++ PATH=/usr/lib/jvm/java-1.8.0-openjdk-amd64/bin:/home/q/Documents/thesis/venv/bin:/usr/lib/jvm/java-11-openjdk-amd64/bin:/usr/bin:/home/q/.local/bin:/usr/lib/jvm/java-11-openjdk-amd64/bin:/usr/bin:/home/q/.sdkman/candidates/maven/current/bin:/home/q/.sdkman/candidates/java/current/bin:/opt/maven/bin:/home/q/.local/bin:/opt/maven/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/q/.config/Code/User/globalStorage/github.copilot-chat/debugCommand
+++ shasum
+++ cut -f 1 -d ' '
++++ date '+%Y-%m-%d %H:%M:%S'
+++ echo -n 2025-10-11 14:28:36
++ t=2f1e85fb71990e104ac63e58e232fb15ec7638a1
++ install_log=/home/q/Documents/new/FlakyDoctor-CICD/FlakyDoctor/projects/354bee28e97025b0c489ef9b0a9997d882ef4417/test-repo/install_test-repo_2f1e85fb71990e104ac63e58e232fb15ec7638a1.log
++ mvn install -pl . -am -DskipTests -Dfindbugs.skip=true -Dbasepom.check.skip-prettier -Dgpg.skip -Drat.skip -Dskip.npm -Dskip.yarn -Dskip.bower -Dskip.grunt -Dskip.gulp -Dskip.jspm -Dskip.karma -Dskip.webpack -Dcheckstyle.skip -Denforcer.skip=true -Dspotbugs.skip -Dmaven.test.failure.ignore=true -Djacoco.skip -Danimal.sniffer.skip -Dmaven.antrun.skip -Dfmt.skip -Dskip.npm -Dlicense.skipCheckLicense -Dlicense.skipAddThirdParty=true -Dfindbugs.skip -Dlicense.skip -DskipDockerBuild -DskipDockerTag -DskipDockerPush -DskipDocker -Denforcer.skip -Ddependency-check.skip
+++ grep 'BUILD ' /home/q/Documents/new/FlakyDoctor-CICD/FlakyDoctor/projects/354bee28e97025b0c489ef9b0a9997d882ef4417/test-repo/install_test-repo_2f1e85fb71990e104ac63e58e232fb15ec7638a1.log
++ res='[[1;34mINFO[m] [1;32mBUILD SUCCESS[m'
++ build_result=NONE
++ [[ [[1;34mINFO[m] [1;32mBUILD SUCCESS[m == *\B\U\I\L\D\ \F\A\I\L\U\R\E* ]]
++ [[ [[1;34mINFO[m] [1;32mBUILD SUCCESS[m == *\B\U\I\L\D\ \S\U\C\C\E\S\S* ]]
++ build_result='BUILD SUCCESS'
++ echo build-result: test-repo 354bee28e97025b0c489ef9b0a9997d882ef4417 . BUILD SUCCESS
+build-result: test-repo 354bee28e97025b0c489ef9b0a9997d882ef4417 . BUILD SUCCESS
++ echo 'test-repo,354bee28e97025b0c489ef9b0a9997d882ef4417,.,BUILD SUCCESS,8'
++ [[ BUILD SUCCESS == \B\U\I\L\D\ \F\A\I\L\U\R\E ]]
++ cd /home/q/Documents/new/FlakyDoctor-CICD/FlakyDoctor
+++ date
++ echo '* ENDING' at Sat Oct 11 02:28:38 PM CEST 2025
+* ENDING at Sat Oct 11 02:28:38 PM CEST 2025
