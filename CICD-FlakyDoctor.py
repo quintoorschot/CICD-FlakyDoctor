@@ -1,6 +1,6 @@
 # CICD-FlakyDoctor.py
 from pathlib import Path
-import os, sys, subprocess
+import os, sys, subprocess, re
 from constructCSV import constructCSV
 
 if __name__ == "__main__":
@@ -22,12 +22,19 @@ if __name__ == "__main__":
         print("[ERROR] OPENAI_API_KEY not set in the environment!")
         sys.exit(1)
 
+    # Sanitize workspace path for output folder
+    safe_name = re.sub(r'[/\\: ]+', '_', str(workspace.name))
+    output_dir = workspace / "results" / f"ID_Results_GPT-4_{safe_name}"
+    output_dir.mkdir(parents=True, exist_ok=True)
+
     # Ensure the script is executable
     flakydoctor_path.chmod(0o755)
 
-    # Pass the project path explicitly and set cwd
+    # Run FlakyDoctor with cleaned output path
     subprocess.run(
-        ["bash", str(flakydoctor_path), str(workspace), openai_key, "GPT-4", "results", str(input_csv), "ID"],
+        ["bash", str(flakydoctor_path), str(workspace), openai_key, "GPT-4", str(output_dir), str(input_csv), "ID"],
         check=True,
         cwd=str(workspace),
     )
+
+    print(f"[INFO] Results saved in: {output_dir}")
