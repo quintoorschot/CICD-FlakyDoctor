@@ -1,6 +1,6 @@
 import argparse
 import os
-import openai
+# import openai
 import sys
 import repair_ID
 import repair_OD

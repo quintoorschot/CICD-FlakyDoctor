@@ -18,5 +18,5 @@ runs:
     - name: Clone FlakyDoctor
       shell: bash
       run: |
-        git clone --depth=1 https://github.com/Intelligent-CAT-Lab/FlakyDoctor.git
+        git clone --depth=2 https://github.com/Intelligent-CAT-Lab/FlakyDoctor.git
         echo "FlakyDoctor cloned into $(pwd)/FlakyDoctor"

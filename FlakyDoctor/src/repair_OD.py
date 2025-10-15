@@ -1,7 +1,7 @@
 import csv
 import sys
 import os
-import openai
+# import openai
 import datetime
 import utils
 import subprocess
@@ -9,7 +9,7 @@ import re
 import time
 import update_pom
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
-import torch
+# import torch
 from bs4 import BeautifulSoup
 from pathlib import Path
 import json
