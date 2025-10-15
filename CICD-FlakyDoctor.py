@@ -25,9 +25,11 @@ if __name__ == "__main__":
     # Ensure the script is executable
     flakydoctor_path.chmod(0o755)
 
+    output_path = workspace / "CICD-FlakyDoctor"
+
     # Pass the project path explicitly and set cwd
     subprocess.run(
-        ["bash", str(flakydoctor_path), str(workspace), openai_key, "GPT-4", "results", str(input_csv), "ID"],
+        ["bash", str(flakydoctor_path), str(workspace), openai_key, "GPT-4", output_path, str(input_csv), "ID"],
         check=True,
         cwd=str(workspace),
     )
