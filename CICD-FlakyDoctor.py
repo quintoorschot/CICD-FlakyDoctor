@@ -27,8 +27,15 @@ if __name__ == "__main__":
     output_path = workspace / "CICD-FlakyDoctor" / f"ID_Results_GPT-4_{safe_name}" / "results"
     output_path.mkdir(parents=True, exist_ok=True)
 
+    projects_root = workspace.parent
     subprocess.run(
-        ["bash", str(flakydoctor_path), str(workspace), openai_key, "GPT-4", str(output_path), str(input_csv), "ID"],
+        ["bash", str(flakydoctor_path),
+        str(projects_root),
+        openai_key,
+        "GPT-4",
+        str(output_path),
+        str(input_csv),
+        "ID"],
         check=True,
         cwd=str(tool_cwd),
     )
