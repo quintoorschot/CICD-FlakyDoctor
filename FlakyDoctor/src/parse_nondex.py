@@ -2,7 +2,7 @@ import csv
 import datetime
 import json
 import os
-# import openai
+import openai
 import signal
 import subprocess
 import sys

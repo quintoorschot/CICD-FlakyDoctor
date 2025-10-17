@@ -1,7 +1,7 @@
 import csv
 import sys
 import os
-# import openai
+import openai
 import datetime
 import utils
 import subprocess
