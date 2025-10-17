@@ -28,6 +28,7 @@ for file in "${flakies[@]}"; do
     result_json=${DIR}/${model}_results_${SubTimeStamp}.json
     save_dir=${DIR}
     details_json=${DIR}/${model}_test_details_${SubTimeStamp}.json
+
     python3 -u src/flakydoctor.py --input-tests-csv ${file} --projects ${clone_dir} --openai-key ${api_key} --model ${model} --nondex-times ${nondex_times} --output-dir ${save_dir} --output-result-csv ${result_csv} --output-result-json ${result_json} --output-details-json ${details_json} --flakiness-type ${flakiness_type}
 done
 
