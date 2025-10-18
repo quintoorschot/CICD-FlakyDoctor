@@ -28,6 +28,12 @@ if __name__ == "__main__":
     output_path.mkdir(parents=True, exist_ok=True)
 
     projects_root = workspace.parent
+
+    print(
+        f"bash {flakydoctor_path} {projects_root} <OPENAI_API_KEY> GPT-4 "
+        f"{output_path} {input_csv} ID"
+    )
+
     subprocess.run(
         ["bash", str(flakydoctor_path),
         str(projects_root),
