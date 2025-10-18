@@ -27,7 +27,7 @@ if __name__ == "__main__":
     output_path = workspace / "CICD-FlakyDoctor" / f"ID_Results_GPT-4_{safe_name}" / "results"
     output_path.mkdir(parents=True, exist_ok=True)
 
-    projects_root = workspace.parent / "test-repo"
+    projects_root = workspace.parent
 
     print(
         f"bash {flakydoctor_path} {projects_root} <OPENAI_API_KEY> GPT-4 "
