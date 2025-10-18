@@ -34,6 +34,15 @@ if __name__ == "__main__":
         f"{output_path} {input_csv} ID"
     )
 
+    print("IMPORTANT ================")
+    import javalang
+    from javalang import tree
+    src = open("/home/q/Documents/new/test-repo/src/test/java/com/example/AppTest.java").read()
+    cu = javalang.parse.parse(src)
+    for cls in cu.types:
+        for m in cls.methods:
+            print(m.name, "start:", getattr(m, "start_position", None), "end:", getattr(m, "end_position", None))
+
     subprocess.run(
         ["bash", str(flakydoctor_path),
         str(projects_root),
