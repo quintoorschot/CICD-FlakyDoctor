@@ -98,7 +98,7 @@ import org.junit.Test;
 public class AppTest {
 
   @Test
-  public void listsFiles_flaky() throws IOException {
+  public void listsFiles() throws IOException {
       Path dir = Files.createTempDirectory("d-");
       Files.createFile(dir.resolve("a.txt"));
       Files.createFile(dir.resolve("b.txt"));
