@@ -5,3 +5,4 @@
 /__pycache__
 /sk-proj-*
 protobuf-2.5.0
+tests.csv
