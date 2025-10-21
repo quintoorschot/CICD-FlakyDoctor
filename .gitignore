@@ -2,4 +2,6 @@
 /FlakyDoctor/projects
 /FlakyDoctor/good_patches
 /FlakyDoctor/results
+/__pycache__
+/sk-proj-*
 protobuf-2.5.0
