@@ -1,4 +1,4 @@
-# THIS DOCUMENT IS PREVIEW ONLY!
+# THIS DOCUMENT IS PREVIEW
 # Install this action into the `.github/workflows` folder of your target project.
 
 name: FlakyDoctor
