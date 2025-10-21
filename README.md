@@ -2,6 +2,9 @@
 
 Integrate FlakyDoctor into the CI/CD pipeline to automatically detect and fix flaky tests.
 
+### ⚠️ Note:
+The current implementation of FlakyDoctor CI/CD only aims to detect and patch implementation-dependent (ID) flakiness in test suites.
+
 ### 🧩 Prerequisites
 
 This integration requires the following:
@@ -14,36 +17,101 @@ This integration requires the following:
 ### ⚙️ Installation
 [FlakyDoctor CI/CD](https://github.com/quintoorschot/CICD-FlakyDoctor) is directly usable in your [GitHub Actions workflows](https://docs.github.com/en/actions/how-tos/write-workflows), no local setup required.
 
-**1. Add to your workflow**
+**1. Add OpenAI secret key to GitHub repository secrets**
 
-Create (or edit) a workflow file, for example:
-``` yml
-name: FlakyDoctor
+To add the key:<br>
+`Target repo -> Settings -> Secrets and variables -> Actions -> Repository secrets -> New repository secret`
+- **Name:** `OPENAI_API_KEY` (case-sensitive)
+- **Secret:** your OpenAI API key
 
-on:
-  pull_request:
-  push:
+Click **Add secret** to save it.
 
-jobs:
-  flakydoctor:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run FlakyDoctor
-        uses: quintoorschot/CICD-FlakyDoctor@v1
+**2. Add Action to your project's workflows**
 
+Copy the [FlakyDoctor action](https://github.com/quintoorschot/CICD-FlakyDoctor/blob/main/flakydoctor.yml) into the `.github/workflows` folder of your target repo.
+
+Run this command in the root of your target folder:<br>
+```sh
+mkdir -p .github/workflows
+curl -fsSL https://raw.githubusercontent.com/quintoorschot/CICD-FlakyDoctor/main/action.yml \
+  | tail -n +4 > .github/workflows/action.yml
 ```
-
-**2.**
-
-.........
 
 
 ### 🧭 Usage
-tbd
+After installation, FlakyDoctor runs automatically on every push or pull request.  
+It analyzes your test suite for flakiness and, when possible, applies patches to fix detected issues.
 
 ### 🧪 Example workflow output
+Consider a Maven project with the following test file (`AppTest.java`):
+```java
+package com.example;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.Test;
+
+public class AppTest {
+
+  @Test
+  public void listsFiles() throws IOException {
+    Path dir = Files.createTempDirectory("d-");
+    Files.createFile(dir.resolve("a.txt"));
+    Files.createFile(dir.resolve("b.txt"));
+    Files.createFile(dir.resolve("c.txt"));
+
+    List<String> names = Arrays.asList(dir.toFile().list());
+
+    // The expected list assumes a fixed order, but actual order from File.list() is non-deterministic.
+    assertEquals(Arrays.asList("a.txt", "b.txt", "c.txt"), names);
+  }
+}
+
+```
+When this code is pushed to the repository or included in a pull request, FlakyDoctor CI/CD automatically runs as part of the workflow (if correctly configured).<br>
+It analyzes the test suite, detects flaky behavior, and tries to generate a patch to make the tests deterministic.
+
+FlakyDoctor creates a new PR where the flaky test shown above is patched as:
+```java
+package com.example;
+import java.util.stream.Collectors;
+
+
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.Test;
+
+public class AppTest {
+
+  @Test
+  public void listsFiles_flaky() throws IOException {
+      Path dir = Files.createTempDirectory("d-");
+      Files.createFile(dir.resolve("a.txt"));
+      Files.createFile(dir.resolve("b.txt"));
+      Files.createFile(dir.resolve("c.txt"));
+
+      List<String> names = Arrays.stream(dir.toFile().list()).sorted().collect(Collectors.toList());
+
+      assertEquals(Arrays.asList("a.txt", "b.txt", "c.txt"), names);
+  }
+}
+```
+
+Besides from a new branch, FlakyDoctor CI/CD also produces an artifact containing the logs of the entire FlakyDoctor process.
 
 ### 📚 Reference
 
