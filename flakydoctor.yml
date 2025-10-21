@@ -1,0 +1,134 @@
+# THIS DOCUMENT IS PREVIEW ONLY!
+# Install this action into the `.github/workflows` folder of your target project.
+
+name: FlakyDoctor
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: write
+
+jobs:
+  flakydoctor:
+    runs-on: ubuntu-latest
+    container: ghcr.io/quintoorschot/cicd-flakydoc-env:latest
+
+    steps:
+      - name: Checkout current repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout FlakyDoctor source
+        uses: actions/checkout@v4
+        with:
+          repository: quintoorschot/CICD-FlakyDoctor
+          ref: main
+          path: CICD-FlakyDoctor
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Sanity check
+        run: |
+          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
+          test -f "$GITHUB_WORKSPACE/CICD-FlakyDoctor/CICD-FlakyDoctor.py" || { echo "missing CICD-FlakyDoctor.py"; exit 1; }
+
+      - name: Cache pip (optional)
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: ${{ runner.os }}-pip-
+
+      - name: Export API key
+        run: |
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY != '' && secrets.OPENAI_API_KEY || secrets.OPEN_API_KEY }}" >> "$GITHUB_ENV"
+          echo "OPEN_API_KEY=${{ secrets.OPENAI_API_KEY != '' && secrets.OPENAI_API_KEY || secrets.OPEN_API_KEY }}" >> "$GITHUB_ENV"
+
+      - name: Verify API key
+        run: |
+          if [ -z "${OPENAI_API_KEY:-}" ]; then echo "OPENAI_API_KEY is missing"; exit 1; fi
+          echo "OPENAI_API_KEY length: ${#OPENAI_API_KEY}"
+
+      - name: Run FlakyDoctor
+        working-directory: ${{ github.workspace }}
+        run: |
+          python3 "$GITHUB_WORKSPACE/CICD-FlakyDoctor/CICD-FlakyDoctor.py"
+
+      # Git inside the container can complain about "dubious ownership"
+      - name: Mark repo safe for Git
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE" || true
+          git config --global --add safe.directory '*' || true
+          git config --global user.email "flakydoctor-bot@example.com"
+          git config --global user.name "FlakyDoctor Bot"
+
+      - name: Apply FlakyDoctor patch if it exists
+        id: apply
+        if: ${{ hashFiles('**/flakydoctor*.patch') != '' }}
+        run: |
+          set -e
+          PATCH_FILE="$(ls -1 flakydoctor*.patch | head -n 1)"
+          echo "Using patch file: $PATCH_FILE"
+
+          BRANCH="flakydoctor-patch-$(date +%Y%m%d%H%M%S)"
+          echo "BRANCH_NAME=$BRANCH" >> "$GITHUB_ENV"
+          git checkout -b "$BRANCH"
+
+          echo "Patch stats:"
+          git apply --stat "$PATCH_FILE" || true
+
+          # Try clean apply while ignoring build/transient outputs
+          if ! git apply --index --whitespace=fix \
+              --exclude='.nondex/*' \
+              --exclude='target/**' \
+              --exclude='.idea/**' \
+              --exclude='**/*.iml' \
+              --exclude='**/*.class' \
+              "$PATCH_FILE"; then
+            echo "Clean apply failed - retry with rejects (still excluding transient files)..."
+            git apply --reject --whitespace=fix \
+              --exclude='.nondex/*' \
+              --exclude='target/**' \
+              --exclude='.idea/**' \
+              --exclude='**/*.iml' \
+              --exclude='**/*.class' \
+              "$PATCH_FILE" || true
+          fi
+
+          # Stage only real source changes
+          git add -A
+
+          if git diff --staged --quiet; then
+            echo "No applicable source changes found in patch."
+            echo "committed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git commit -m "Apply FlakyDoctor patch for flaky tests"
+          git push origin "$BRANCH"
+          echo "committed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Open Pull Request for FlakyDoctor patch
+        if: ${{ steps.apply.outputs.committed == 'true' }}
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ env.BRANCH_NAME }}
+          base: main
+          title: "FlakyDoctor auto-patch: Fix flaky test(s)"
+          body: |
+            This PR was automatically created by FlakyDoctor after detecting and patching flaky tests.
+            - Source branch: ${{ env.BRANCH_NAME }}
+          labels: flakydoctor, automated-pr
+          delete-branch: true
+
+      - name: Upload FlakyDoctor results
+        if: ${{ env.ACT != 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: flakydoctor-results
+          path: |
+            ${{ github.workspace }}/CICD-FlakyDoctor/ID_Results_GPT-4_*
+            ${{ github.workspace }}/*.patch
