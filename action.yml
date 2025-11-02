@@ -49,6 +49,16 @@ runs:
           echo "OPENAI_API_KEY=${{ inputs.openai_api_key }}" >> "$GITHUB_ENV"
         fi
 
+    - name: Debug action path
+      shell: bash
+      run: |
+        echo "github.action_path = ${{ github.action_path }}"
+        echo "---- ls -la ${{ github.action_path }} ----"
+        ls -la "${{ github.action_path }}"
+        echo "---- find (top 3 levels) ----"
+        # no tree in the runner/container, so use find
+        find "${{ github.action_path }}" -maxdepth 4 -print
+
     - name: Run CICD FlakyDoctor
       shell: bash
       run: |
