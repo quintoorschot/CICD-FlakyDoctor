@@ -39,9 +39,8 @@ runs:
 
     - name: Upgrade pip
       shell: bash
-      run: python -m pip install --upgrade pip
+      run: python -m pip install --upgrade pip --no-cache-dir
 
-    # if the user passed the key via `with:`, expose it to the job env
     - name: Export API key (optional)
       shell: bash
       run: |
@@ -49,17 +48,67 @@ runs:
           echo "OPENAI_API_KEY=${{ inputs.openai_api_key }}" >> "$GITHUB_ENV"
         fi
 
-    - name: Debug action path
+    # DEBUG + path normalization for runner vs container
+    - name: Locate action directory
+      id: locate
       shell: bash
       run: |
-        echo "github.action_path = ${{ github.action_path }}"
-        echo "---- ls -la ${{ github.action_path }} ----"
-        ls -la "${{ github.action_path }}"
-        echo "---- find (top 3 levels) ----"
-        # no tree in the runner/container, so use find
-        find "${{ github.action_path }}" -maxdepth 4 -print
+        echo "github.action_path (as reported): ${{ github.action_path }}"
+
+        HOST_PATH="${{ github.action_path }}"
+        CONT_PATH="${HOST_PATH/\/home\/runner\/work/\/__w}"
+
+        echo "Trying host-style path: $HOST_PATH"
+        echo "Trying container-style path: $CONT_PATH"
+
+        if [ -d "$HOST_PATH" ]; then
+          REAL_PATH="$HOST_PATH"
+        elif [ -d "$CONT_PATH" ]; then
+          REAL_PATH="$CONT_PATH"
+        else
+          echo "ERROR: neither '$HOST_PATH' nor '$CONT_PATH' exists." >&2
+          echo "Listing /__w/_actions for debugging..." >&2
+          find /__w/_actions -maxdepth 4 -print 2>/dev/null || true
+          exit 1
+        fi
+
+        echo "Using action path: $REAL_PATH"
+        echo "real_path=$REAL_PATH" >> "$GITHUB_OUTPUT"
+
+        echo "---- ls -la $REAL_PATH ----"
+        ls -la "$REAL_PATH"
+        echo "---- find (3 levels) ----"
+        find "$REAL_PATH" -maxdepth 3 -print
 
     - name: Run CICD FlakyDoctor
       shell: bash
       run: |
-        python "${{ github.action_path }}/CICD-FlakyDoctor.py"
+        set -e
+        ROOT="${{ steps.locate.outputs.real_path }}"
+
+        CANDIDATES=(
+          "$ROOT/CICD-FlakyDoctor.py"
+          "$ROOT/flakydoc.py"
+          "$ROOT/main.py"
+          "$ROOT/src/CICD-FlakyDoctor.py"
+        )
+
+        FOUND=""
+        for f in "${CANDIDATES[@]}"; do
+          if [ -f "$f" ]; then
+            FOUND="$f"
+            break
+          fi
+        done
+
+        if [ -z "$FOUND" ]; then
+          echo "ERROR: none of the expected scripts exist in $ROOT" >&2
+          echo "Looked for:" >&2
+          printf '  - %s\n' "${CANDIDATES[@]}" >&2
+          echo "Current contents:" >&2
+          ls -R "$ROOT" >&2 || true
+          exit 1
+        fi
+
+        echo "Running: python \"$FOUND\""
+        python "$FOUND"
