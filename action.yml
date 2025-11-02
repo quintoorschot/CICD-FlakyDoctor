@@ -28,12 +28,6 @@ runs:
           exit 1
         fi
 
-        echo "Using action dir: $ROOT"
-        echo "root=$ROOT" >> "$GITHUB_OUTPUT"
-
-        echo "=== action dir (maxdepth 3) ==="
-        find "$ROOT" -maxdepth 3 -print
-
     - name: Make workspace alias for script
       shell: bash
       run: |
