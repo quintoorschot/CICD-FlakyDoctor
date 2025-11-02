@@ -24,20 +24,32 @@ name: CI/CD FlakyDoctor
 description: GitHub Action for FlakyDoctor
 author: Quint van Oorschot
 
+inputs:
+  openai_api_key:
+    description: "OpenAI key (optional if set in env)"
+    required: false
+
 runs:
   using: composite
   steps:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.10.12'
+        python-version: "3.10.12"
 
     - name: Upgrade pip
       shell: bash
       run: python -m pip install --upgrade pip
 
-    - name: Clone FlakyDoctor
+    # if the user passed the key via `with:`, expose it to the job env
+    - name: Export API key (optional)
       shell: bash
       run: |
-        git clone --depth=2 https://github.com/Intelligent-CAT-Lab/FlakyDoctor.git "${{ github.workspace }}/FlakyDoctor"
-        echo "FlakyDoctor cloned into ${{ github.workspace }}/FlakyDoctor"
+        if [ -n "${{ inputs.openai_api_key }}" ]; then
+          echo "OPENAI_API_KEY=${{ inputs.openai_api_key }}" >> "$GITHUB_ENV"
+        fi
+
+    - name: Run CICD FlakyDoctor
+      shell: bash
+      run: |
+        python "${{ github.action_path }}/CICD-FlakyDoctor.py"
