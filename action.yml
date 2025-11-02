@@ -20,164 +20,24 @@
 #         git clone --depth=2 https://github.com/Intelligent-CAT-Lab/FlakyDoctor.git
 #         echo "FlakyDoctor cloned into $(pwd)/FlakyDoctor"
 
-# action.yml
-name: "CI/CD FlakyDoctor"
-description: "Run FlakyDoctor on the current repository and open a PR with a generated patch."
-author: "Quint van Oorschot"
-
-branding:
-  icon: "activity"
-  color: "purple"
-
-inputs:
-  openai_api_key:
-    description: "OpenAI API key to pass to FlakyDoctor"
-    required: true
-  tool_repo:
-    description: "Repository that contains the CICD-FlakyDoctor runner"
-    required: false
-    default: "quintoorschot/CICD-FlakyDoctor"
-  tool_ref:
-    description: "Branch/ref of the tool repository to use"
-    required: false
-    default: "main"
+name: CI/CD FlakyDoctor
+description: GitHub Action for FlakyDoctor
+author: Quint van Oorschot
 
 runs:
-  using: "composite"
+  using: composite
   steps:
-    # 1. Checkout the target repo (the developer's repo where the workflow runs)
-    - name: Checkout current repository
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-
-    # 2. Checkout the FlakyDoctor CICD runner (your tool repo)
-    - name: Checkout FlakyDoctor source
-      uses: actions/checkout@v4
-      with:
-        repository: ${{ inputs.tool_repo }}
-        ref: ${{ inputs.tool_ref }}
-        path: CICD-FlakyDoctor
-        token: ${{ github.token }}
-
-    # 3. Python env
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: "3.10"
+        python-version: '3.10.12'
 
     - name: Upgrade pip
       shell: bash
       run: python -m pip install --upgrade pip
 
-    - name: Install tool requirements if present
+    - name: Clone FlakyDoctor
       shell: bash
       run: |
-        if [ -f "$GITHUB_WORKSPACE/CICD-FlakyDoctor/requirements.txt" ]; then
-          pip install -r "$GITHUB_WORKSPACE/CICD-FlakyDoctor/requirements.txt"
-        else
-          echo "No requirements.txt found in CICD-FlakyDoctor/"
-        fi
-
-    # 4. Provide API key
-    - name: Export API key
-      shell: bash
-      run: |
-        echo "OPENAI_API_KEY=${{ inputs.openai_api_key }}" >> "$GITHUB_ENV"
-        echo "OPEN_API_KEY=${{ inputs.openai_api_key }}" >> "$GITHUB_ENV"
-
-    - name: Verify API key
-      shell: bash
-      run: |
-        if [ -z "${OPENAI_API_KEY:-}" ]; then
-          echo "OPENAI_API_KEY is missing"
-          exit 1
-        fi
-        echo "OPENAI_API_KEY is set"
-
-    # 5. Sanity check (equivalent to what was in the workflow)
-    - name: Sanity check FlakyDoctor files
-      shell: bash
-      run: |
-        echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
-        ls -la "$GITHUB_WORKSPACE/CICD-FlakyDoctor"
-        test -f "$GITHUB_WORKSPACE/CICD-FlakyDoctor/CICD-FlakyDoctor.py" || { echo "missing CICD-FlakyDoctor.py"; exit 1; }
-
-    # 6. Run FlakyDoctor
-    - name: Run FlakyDoctor
-      shell: bash
-      working-directory: ${{ github.workspace }}
-      run: |
-        python3 "$GITHUB_WORKSPACE/CICD-FlakyDoctor/CICD-FlakyDoctor.py"
-
-    # 7. Make git safe + identity
-    - name: Configure Git inside workflow
-      shell: bash
-      run: |
-        git config --global --add safe.directory "$GITHUB_WORKSPACE" || true
-        git config --global --add safe.directory '*' || true
-        git config --global user.email "flakydoctor-bot@example.com"
-        git config --global user.name "FlakyDoctor Bot"
-
-    # 8. Apply patch if generated
-    - name: Apply FlakyDoctor patch if it exists
-      if: ${{ hashFiles('**/flakydoctor*.patch') != '' }}
-      shell: bash
-      run: |
-        set -e
-        echo "Applying generated patch..."
-        PATCH_FILE=$(ls flakydoctor*.patch | head -n 1)
-        echo "Using patch file: $PATCH_FILE"
-        git apply --stat "$PATCH_FILE" || true
-        if ! git apply --index --whitespace=fix \
-          --exclude='.nondex/*' --exclude='**/.nondex/*' \
-          --exclude='target/**' --exclude='**/target/**' \
-          --exclude='**/*.class' "$PATCH_FILE"; then
-          echo "Patch did not apply cleanly, retrying with rejects..."
-          git apply --reject --whitespace=fix \
-            --exclude='.nondex/*' --exclude='**/.nondex/*' \
-            --exclude='target/**' --exclude='**/target/**' \
-            --exclude='**/*.class' "$PATCH_FILE" || true
-        fi
-        git add -A
-        if ! git diff --staged --quiet; then
-          git commit -m "Apply FlakyDoctor patch for flaky tests"
-          echo "PATCH_COMMITTED=true" >> "$GITHUB_ENV"
-        else
-          echo "No applicable source changes found in patch."
-          echo "PATCH_COMMITTED=false" >> "$GITHUB_ENV"
-        fi
-
-    # 9. Push patch to new branch
-    - name: Push patch branch
-      if: ${{ hashFiles('**/flakydoctor*.patch') != '' }}
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
-      shell: bash
-      run: |
-        BRANCH="flakydoctor-patch-$(date +%Y%m%d%H%M%S)"
-        git checkout -b "$BRANCH"
-        git push origin "$BRANCH"
-        echo "PUSHED_BRANCH=$BRANCH" >> "$GITHUB_ENV"
-
-    # 10. Open PR
-    - name: Open Pull Request for FlakyDoctor patch
-      if: ${{ hashFiles('**/flakydoctor*.patch') != '' }}
-      uses: peter-evans/create-pull-request@v6
-      with:
-        token: ${{ github.token }}
-        base: ${{ github.ref_name }}
-        branch: ${{ env.PUSHED_BRANCH }}
-        title: "FlakyDoctor auto-patch: Fix flaky test(s)"
-        body: "This PR was automatically created by FlakyDoctor after detecting and patching flaky tests."
-        labels: flakydoctor, automated-pr
-
-    # 11. Upload artifacts
-    - name: Upload FlakyDoctor results
-      if: ${{ env.ACT != 'true' }}
-      uses: actions/upload-artifact@v4
-      with:
-        name: flakydoctor-results
-        path: |
-          ${{ github.workspace }}/CICD-FlakyDoctor/ID_Results_GPT-4_*
-          ${{ github.workspace }}/*.patch
+        git clone --depth=2 https://github.com/Intelligent-CAT-Lab/FlakyDoctor.git "${{ github.workspace }}/FlakyDoctor"
+        echo "FlakyDoctor cloned into ${{ github.workspace }}/FlakyDoctor"
