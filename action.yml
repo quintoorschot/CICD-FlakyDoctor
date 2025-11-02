@@ -32,14 +32,12 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.10.12"
-
-    - name: Upgrade pip
+    - name: Show container Python
       shell: bash
-      run: python -m pip install --upgrade pip --no-cache-dir
+      run: |
+        which python3
+        python3 --version
+        pip3 list | grep javalang || echo "javalang missing!"
 
     - name: Export API key (optional)
       shell: bash
@@ -48,48 +46,21 @@ runs:
           echo "OPENAI_API_KEY=${{ inputs.openai_api_key }}" >> "$GITHUB_ENV"
         fi
 
-    # find the real action dir (host vs container) WITHOUT blowing up
     - name: Locate action directory
       id: locate
       shell: bash
       run: |
-        set -e
         HOST="${{ github.action_path }}"
         CONT="${HOST/\/home\/runner\/work/\/__w}"
-
-        if [ -d "$HOST" ]; then
-          ROOT="$HOST"
-        elif [ -d "$CONT" ]; then
-          ROOT="$CONT"
-        else
-          echo "Could not find action dir from:"
-          echo "  HOST: $HOST"
-          echo "  CONT: $CONT"
-          echo "Listing /__w/_actions for debug:"
-          find /__w/_actions -maxdepth 5 -print 2>/dev/null || true
-          exit 1
-        fi
-
-        echo "Using action dir: $ROOT"
+        ROOT=""
+        if [ -d "$HOST" ]; then ROOT="$HOST"; fi
+        if [ -d "$CONT" ]; then ROOT="$CONT"; fi
         echo "root=$ROOT" >> "$GITHUB_OUTPUT"
-
-        echo "=== action dir (maxdepth 3) ==="
-        # use find without a pipe to avoid SIGPIPE / exit 141
-        find "$ROOT" -maxdepth 3 -print
 
     - name: Run CICD FlakyDoctor
       shell: bash
       run: |
-        set -e
         ROOT="${{ steps.locate.outputs.root }}"
         SCRIPT="$ROOT/CICD-FlakyDoctor.py"
-
-        if [ ! -f "$SCRIPT" ]; then
-          echo "ERROR: $SCRIPT not found."
-          echo "Contents of $ROOT:"
-          ls -la "$ROOT"
-          exit 1
-        fi
-
-        echo "Running: python \"$SCRIPT\""
-        python "$SCRIPT"
+        echo "Running: python3 \"$SCRIPT\""
+        python3 "$SCRIPT"
