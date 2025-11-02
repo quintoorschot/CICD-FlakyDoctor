@@ -17,7 +17,7 @@ This integration requires the following:
 ### ⚙️ Installation
 [FlakyDoctor CI/CD](https://github.com/quintoorschot/CICD-FlakyDoctor) is directly usable in your [GitHub Actions workflows](https://docs.github.com/en/actions/how-tos/write-workflows), no local setup required.
 
-**1. Add OpenAI secret key to GitHub repository secrets**
+**1. Add OpenAI secret key to your GitHub repository secrets**
 
 To add the key:<br>
 `Target repo -> Settings -> Secrets and variables -> Actions -> Repository secrets -> New repository secret`
@@ -28,18 +28,19 @@ Click **Add secret** to save it.
 
 **2. Add Action to your project's workflows**
 
-Copy the [FlakyDoctor action](https://github.com/quintoorschot/CICD-FlakyDoctor/blob/main/flakydoctor.yml) into the `.github/workflows` folder of your target repo.
+Copy the [FlakyDoctor action](https://github.com/quintoorschot/FlakyDoctor-Workflow/blob/main/flakydoctor.yml) into the `.github/workflows` folder of your target repo.
 
-Run this command in the root of your target folder:<br>
+Or run this command in the root of your target folder:<br>
 ```sh
 mkdir -p .github/workflows
-curl -fsSL https://raw.githubusercontent.com/quintoorschot/CICD-FlakyDoctor/main/action.yml \
+curl -fsSL https://raw.githubusercontent.com/quintoorschot/FlakyDoctor-Workflow/main/flakydoctor.yml \
   | tail -n +4 > .github/workflows/action.yml
+
 ```
 
 
 ### 🧭 Usage
-After installation, FlakyDoctor runs automatically on every push or pull request.  
+After installation, FlakyDoctor runs automatically in GitHub Actions on every push or pull request.  
 It analyzes your test suite for flakiness and, when possible, applies patches to fix detected issues.
 
 ### 🧪 Example workflow output
@@ -128,7 +129,7 @@ For citing FlakyDoctor CI/CD and the corresponding paper, you can use:
 @misc{vanoorschot2025flakydoctor,
   author       = {Quint van Oorschot},
   title        = {FlakyDoctor CI/CD: Automated Detection and Repair of Flaky Tests},
-  year         = {2025},
+  year         = {2026},
   howpublished = {\url{https://github.com/quintoorschot/CICD-FlakyDoctor}}
 }
 ```
