@@ -48,49 +48,48 @@ runs:
           echo "OPENAI_API_KEY=${{ inputs.openai_api_key }}" >> "$GITHUB_ENV"
         fi
 
-    # 🔎 REAL DEBUG that works in a container
-    - name: Debug filesystem
+    # find the real action dir (host vs container) WITHOUT blowing up
+    - name: Locate action directory
+      id: locate
       shell: bash
       run: |
-        set -x
-        echo "pwd = $(pwd)"
-        echo "whoami = $(whoami)"
-        echo "GITHUB_WORKSPACE='${GITHUB_WORKSPACE}'"
-        echo "=== / (top level) ==="
-        ls -la /
-        echo "=== /__w (if mounted) ==="
-        ls -la /__w 2>/dev/null || true
-        echo "=== /__w/_actions (if mounted) ==="
-        ls -R /__w/_actions 2>/dev/null | head -n 2000 || true
-        echo "=== GITHUB_WORKSPACE (if exists) ==="
-        if [ -n "${GITHUB_WORKSPACE}" ] && [ -d "${GITHUB_WORKSPACE}" ]; then
-          ls -R "${GITHUB_WORKSPACE}" | head -n 2000
+        set -e
+        HOST="${{ github.action_path }}"
+        CONT="${HOST/\/home\/runner\/work/\/__w}"
+
+        if [ -d "$HOST" ]; then
+          ROOT="$HOST"
+        elif [ -d "$CONT" ]; then
+          ROOT="$CONT"
         else
-          echo "GITHUB_WORKSPACE not mounted or empty"
-        fi
-
-    # ✅ pull the repo again INSIDE the container, where we control the path
-    - name: Fetch FlakyDoctor source
-      shell: bash
-      run: |
-        set -e
-        TARGET=/tmp/flakydoctor-src
-        rm -rf "$TARGET"
-        git clone --depth=1 https://github.com/quintoorschot/CICD-FlakyDoctor.git "$TARGET"
-        echo "Cloned into $TARGET"
-        ls -R "$TARGET" | head -n 2000
-
-    # 🧪 actually run your script from the clone
-    - name: Run FlakyDoctor
-      shell: bash
-      run: |
-        set -e
-        SRC=/tmp/flakydoctor-src
-        # change this if your file has a different name / path
-        SCRIPT="$SRC/CICD-FlakyDoctor.py"
-        if [ ! -f "$SCRIPT" ]; then
-          echo "ERROR: $SCRIPT not found. Contents of $SRC:"
-          ls -R "$SRC"
+          echo "Could not find action dir from:"
+          echo "  HOST: $HOST"
+          echo "  CONT: $CONT"
+          echo "Listing /__w/_actions for debug:"
+          find /__w/_actions -maxdepth 5 -print 2>/dev/null || true
           exit 1
         fi
+
+        echo "Using action dir: $ROOT"
+        echo "root=$ROOT" >> "$GITHUB_OUTPUT"
+
+        echo "=== action dir (maxdepth 3) ==="
+        # use find without a pipe to avoid SIGPIPE / exit 141
+        find "$ROOT" -maxdepth 3 -print
+
+    - name: Run CICD FlakyDoctor
+      shell: bash
+      run: |
+        set -e
+        ROOT="${{ steps.locate.outputs.root }}"
+        SCRIPT="$ROOT/CICD-FlakyDoctor.py"
+
+        if [ ! -f "$SCRIPT" ]; then
+          echo "ERROR: $SCRIPT not found."
+          echo "Contents of $ROOT:"
+          ls -la "$ROOT"
+          exit 1
+        fi
+
+        echo "Running: python \"$SCRIPT\""
         python "$SCRIPT"
