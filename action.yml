@@ -32,20 +32,18 @@ inputs:
 runs:
   using: composite
   steps:
-    # 1. use container python (already has javalang)
+    # use the container's python (has javalang)
     - name: Show container Python
       shell: bash
       run: |
         which python3
         python3 --version
-        # prove javalang is there
         python3 - << 'PY'
         import importlib
         m = importlib.import_module("javalang")
-        print("javalang", getattr(m, "__version__", "OK"))
+        print("javalang OK")
         PY
 
-    # 2. expose key if given
     - name: Export API key (optional)
       shell: bash
       run: |
@@ -53,7 +51,6 @@ runs:
           echo "OPENAI_API_KEY=${{ inputs.openai_api_key }}" >> "$GITHUB_ENV"
         fi
 
-    # 3. find the real dir of THIS action
     - name: Locate action directory
       id: locate
       shell: bash
@@ -77,8 +74,9 @@ runs:
         echo "=== action dir (maxdepth 3) ==="
         find "$ROOT" -maxdepth 3 -print
 
-    # 4. make the path the script expects
-    - name: Make workspace alias
+    # create the path your script expects:
+    # /__w/<repo>/<repo>/CICD-FlakyDoctor -> /__w/_actions/.../main
+    - name: Make workspace alias for script
       shell: bash
       run: |
         set -e
@@ -86,24 +84,22 @@ runs:
         WS="${GITHUB_WORKSPACE:-/workspace}"
         TARGET="$WS/CICD-FlakyDoctor"
 
-        echo "Workspace is: $WS"
-        echo "Action root is: $ROOT"
-        echo "Script expects: $TARGET"
+        echo "Workspace: $WS"
+        echo "Action root: $ROOT"
+        echo "Target alias: $TARGET"
 
-        # if there's already a dir, leave it; if not, symlink to action
         if [ -e "$TARGET" ]; then
-          echo "$TARGET already exists:"
-          ls -la "$TARGET"
+          echo "$TARGET already exists"
+          ls -la "$TARGET" || true
         else
           mkdir -p "$WS"
           ln -s "$ROOT" "$TARGET"
           echo "Created symlink: $TARGET -> $ROOT"
         fi
 
-        # show the exact file the script was crying about
+        # just show the file the script was complaining about
         ls -la "$TARGET/FlakyDoctor/src" || true
 
-    # 5. run the script (now the path exists)
     - name: Run CICD FlakyDoctor
       shell: bash
       run: |
@@ -111,7 +107,8 @@ runs:
         ROOT="${{ steps.locate.outputs.root }}"
         SCRIPT="$ROOT/CICD-FlakyDoctor.py"
         if [ ! -f "$SCRIPT" ]; then
-          echo "ERROR: $SCRIPT not found"
+          echo "ERROR: $SCRIPT not found in $ROOT"
+          ls -la "$ROOT"
           exit 1
         fi
         echo "Running: python3 \"$SCRIPT\""
