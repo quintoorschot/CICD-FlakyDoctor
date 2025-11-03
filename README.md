@@ -17,16 +17,25 @@ This integration requires the following:
 ### ⚙️ Installation
 [FlakyDoctor CI/CD](https://github.com/quintoorschot/CICD-FlakyDoctor) is directly usable in your [GitHub Actions workflows](https://docs.github.com/en/actions/how-tos/write-workflows), no local setup required.
 
-**1. Add OpenAI secret key to your GitHub repository secrets**
+#### 1. Add OpenAI secret key to your GitHub repository
 
-To add the key:<br>
-`Target repo -> Settings -> Secrets and variables -> Actions -> Repository secrets -> New repository secret`
-- **Name:** `OPENAI_API_KEY` (case-sensitive)
-- **Secret:** your OpenAI API key
+Follow these steps in the **target repository**:
 
-Click **Add secret** to save it.
+1. Open **Settings → Secrets and variables → Actions**.
+2. Click **New repository secret**.
+3. Set:
+   - **Name:** `OPENAI_API_KEY`
+   - **Secret:** your OpenAI API key value
+4. Click **Add secret**.
 
-**2. Add Action to your project's workflows**
+#### 2. Set workflow permissions
+
+1. Go to **Repository → Settings → Actions → General**  
+2. Under **Workflow permissions**, select **Read and write permissions**  
+3. Check **Allow GitHub Actions to create and approve pull requests**  
+4. Click **Save**
+
+#### 3. Add Action to your project's workflows
 
 Copy the [FlakyDoctor action](https://github.com/quintoorschot/FlakyDoctor-Workflow/blob/main/flakydoctor.yml) into the `.github/workflows` folder of your target repo.
 
@@ -129,7 +138,7 @@ For citing FlakyDoctor CI/CD and the corresponding paper, you can use:
 @misc{vanoorschot2025flakydoctor,
   author       = {Quint van Oorschot},
   title        = {FlakyDoctor CI/CD: Automated Detection and Repair of Flaky Tests},
-  year         = {2026},
+  year         = {2025},
   howpublished = {\url{https://github.com/quintoorschot/CICD-FlakyDoctor}}
 }
 ```
