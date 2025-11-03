@@ -121,7 +121,7 @@ public class AppTest {
 }
 ```
 
-Besides from a new branch, FlakyDoctor CI/CD also produces an artifact containing the logs of the entire FlakyDoctor process.
+Additionaly to the PR, FlakyDoctor CI/CD also produces an artifact containing the logs of the entire FlakyDoctor process.
 
 ### 📚 Reference
 
