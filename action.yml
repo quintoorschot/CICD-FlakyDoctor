@@ -11,45 +11,39 @@ runs:
   using: composite
   steps:
 
+    - name: Export API key
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.openai_api_key }}" ]; then
+          echo "OPENAI_API_KEY=${{ inputs.openai_api_key }}" >> "$GITHUB_ENV"
+        fi
+
     - name: Locate action directory
       id: locate
       shell: bash
       run: |
-        HOST="${{ github.action_path }}"
-        CONT="${HOST/\/home\/runner\/work/\/__w}"
-
-        if [ -d "$HOST" ]; then
-          ROOT="$HOST"
-        elif [ -d "$CONT" ]; then
-          ROOT="$CONT"
-        else
-          echo "Could not find action dir"
-          find /__w/_actions -maxdepth 5 -print 2>/dev/null || true
-          exit 1
+        ROOT="/__w/_actions/quintoorschot/CICD-FlakyDoctor/main"
+        if [ ! -d "$ROOT" ]; then
+          ROOT="${GITHUB_ACTION_PATH:-$PWD}"
         fi
+        echo "Using action dir: $ROOT"
+        echo "root=$ROOT" >> "$GITHUB_OUTPUT"
 
     - name: Make workspace alias for script
       shell: bash
       run: |
         set -e
         ROOT="${{ steps.locate.outputs.root }}"
-        WS="${GITHUB_WORKSPACE:-/workspace}"
+        WS="$GITHUB_WORKSPACE"
         TARGET="$WS/CICD-FlakyDoctor"
 
         echo "Workspace: $WS"
         echo "Action root: $ROOT"
         echo "Target alias: $TARGET"
 
-        if [ -e "$TARGET" ]; then
-          echo "$TARGET already exists"
-          ls -la "$TARGET" || true
-        else
-          mkdir -p "$WS"
-          ln -s "$ROOT" "$TARGET"
-          echo "Created symlink: $TARGET -> $ROOT"
-        fi
-
-        # just show the file the script was complaining about
+        rm -rf "$TARGET"
+        mkdir -p "$(dirname "$TARGET")"
+        ln -s "$ROOT" "$TARGET"
         ls -la "$TARGET/FlakyDoctor/src" || true
 
     - name: Run CICD FlakyDoctor
@@ -58,10 +52,12 @@ runs:
         set -e
         ROOT="${{ steps.locate.outputs.root }}"
         SCRIPT="$ROOT/CICD-FlakyDoctor.py"
+
         if [ ! -f "$SCRIPT" ]; then
           echo "ERROR: $SCRIPT not found in $ROOT"
           ls -la "$ROOT"
           exit 1
         fi
+
         echo "Running: python3 \"$SCRIPT\""
         python3 "$SCRIPT"
