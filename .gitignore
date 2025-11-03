@@ -4,4 +4,5 @@
 /FlakyDoctor/results
 /__pycache__
 /sk-proj-*
+/venv/
 protobuf-2.5.0
