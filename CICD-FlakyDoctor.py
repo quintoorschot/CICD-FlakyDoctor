@@ -1,9 +1,7 @@
 from pathlib import Path
 import os, sys, subprocess, re
-from constructCSV import constructCSV
 
 if __name__ == "__main__":
-    constructCSV()
 
     workspace = Path(os.environ.get("GITHUB_WORKSPACE", Path(__file__).resolve().parents[1]))
     fd_root = workspace / "CICD-FlakyDoctor"
