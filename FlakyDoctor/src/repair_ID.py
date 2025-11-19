@@ -126,7 +126,9 @@ def main(pr_csv, projects_dir, details_csv, model, nondex_times, result_csv, res
                             try:
                                 result_dict = repair_ID_tests(info, model, nondex_times,result_csv,result_json,save_dir, idx, loading_model, tokenizer)
                             except Exception as e:
-                                info["Exceptions"] = str(e)
+                                info["Exceptions"]["repair_error"] = str(e)
+                                print(f"[WARNING] GPT failure for {test}: {e}", flush=True)
+                                #info["Exceptions"] = str(e)
                             test_done = True
                         elif test_result == "test_pass":
                             info["jdk"] = jdk
@@ -334,7 +336,7 @@ def repair_ID_tests(test_info, model, nondex_times,result_csv,result_json,save_d
                     test_info["prompts"][round] = prompt
                     test_info["responses"][round] = response
                     test_info["Exceptions"][round] = str(e)
-                    break
+                    raise
             
             if model == "MagicCoder":
                 signal.signal(signal.SIGALRM, handler)
@@ -348,7 +350,7 @@ def repair_ID_tests(test_info, model, nondex_times,result_csv,result_json,save_d
                     test_info["responses"][round] = response
                     test_info["Exceptions"][round] = str(e)
                     signal.alarm(0)
-                    break
+                    raise
                 signal.alarm(0)
             
             end = datetime.datetime.now()
