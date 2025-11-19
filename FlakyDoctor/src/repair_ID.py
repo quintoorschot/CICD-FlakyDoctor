@@ -129,6 +129,7 @@ def main(pr_csv, projects_dir, details_csv, model, nondex_times, result_csv, res
                                 print(f"::warning::GPT-4 failed during patch generation: {e}")
                                 info["Exceptions"]["repair_error"] = str(e)
                                 print(f"[WARNING] GPT failure for {test}: {e}", flush=True)
+                                raise RuntimeError(f"GPT-4 failed for test {test}") from e
                                 #info["Exceptions"] = str(e)
                             test_done = True
                         elif test_result == "test_pass":
@@ -160,6 +161,7 @@ def main(pr_csv, projects_dir, details_csv, model, nondex_times, result_csv, res
                                     print(f"::warning::GPT-4 failed during patch generation: {e}")
                                     info["Exceptions"]["repair_error"] = str(e)
                                     print(f"[WARNING] GPT failure for {test}: {e}", flush=True)
+                                    raise RuntimeError(f"GPT-4 failed for test {test}") from e
                                     #info["Exceptions"] = str(e)
                                 test_done = True
                             else:
