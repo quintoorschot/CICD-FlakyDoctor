@@ -48,6 +48,7 @@ if __name__ == "__main__":
     openai.api_key = api_key
     openai.organization = os.getenv("OPENAI_ORGANIZATION")
     
+    print("hello!!! 2")
     if flakiness_type == "ID":
         try:
             repair_ID.main(input_flakies_csv, projects_dir, details_json, model, nondex_times, result_csv, result_json, output_dir)
