@@ -126,7 +126,7 @@ def main(pr_csv, projects_dir, details_csv, model, nondex_times, result_csv, res
                             try:
                                 result_dict = repair_ID_tests(info, model, nondex_times,result_csv,result_json,save_dir, idx, loading_model, tokenizer)
                             except Exception as e:
-                                print(f"::warning file={file_path}::GPT-4 failed during patch generation: {e}")
+                                print(f"::warning::GPT-4 failed during patch generation: {e}")
                                 info["Exceptions"]["repair_error"] = str(e)
                                 print(f"[WARNING] GPT failure for {test}: {e}", flush=True)
                                 #info["Exceptions"] = str(e)
@@ -157,7 +157,7 @@ def main(pr_csv, projects_dir, details_csv, model, nondex_times, result_csv, res
                                 try:
                                     result_dict = repair_ID_tests(info, model, nondex_times,result_csv,result_json,save_dir, idx, loading_model, tokenizer)
                                 except Exception as e:
-                                    print(f"::warning file={file_path}::GPT-4 failed during patch generation: {e}")
+                                    print(f"::warning::GPT-4 failed during patch generation: {e}")
                                     info["Exceptions"]["repair_error"] = str(e)
                                     print(f"[WARNING] GPT failure for {test}: {e}", flush=True)
                                     #info["Exceptions"] = str(e)
