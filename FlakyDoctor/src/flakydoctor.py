@@ -49,7 +49,10 @@ if __name__ == "__main__":
     openai.organization = os.getenv("OPENAI_ORGANIZATION")
     
     if flakiness_type == "ID":
-        repair_ID.main(input_flakies_csv, projects_dir, details_json, model, nondex_times, result_csv, result_json, output_dir)
+        try:
+            repair_ID.main(input_flakies_csv, projects_dir, details_json, model, nondex_times, result_csv, result_json, output_dir)
+        except Exception as e:
+            raise RuntimeError(f"GPT-4 failed for: {e}")
     elif flakiness_type == "OD":
         repair_OD.main(input_flakies_csv, projects_dir, details_json, model, nondex_times, result_csv, result_json, output_dir)
 
