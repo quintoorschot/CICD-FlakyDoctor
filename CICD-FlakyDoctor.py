@@ -41,16 +41,22 @@ if __name__ == "__main__":
     #     for m in cls.methods:
     #         print(m.name, "start:", getattr(m, "start_position", None), "end:", getattr(m, "end_position", None))
 
-    subprocess.run(
-        ["bash", str(flakydoctor_path),
-        str(projects_root),
-        openai_key,
-        "GPT-4",
-        str(output_path),
-        str(input_csv),
-        "ID"],
-        check=True,
-        cwd=str(tool_cwd),
-    )
+    try:
+        subprocess.run(
+            ["bash", str(flakydoctor_path),
+            str(projects_root),
+            openai_key,
+            "GPT-4",
+            str(output_path),
+            str(input_csv),
+            "ID"],
+            check=True,
+            cwd=str(tool_cwd),
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+        )
+    except Exception as e:
+        print(f"::error::FlakyDoctor GPT-4 run failed: {e}", flush=True)
+        raise
 
     print(f"[INFO] Results saved in: {output_path}")

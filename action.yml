@@ -29,6 +29,21 @@ runs:
         echo "Using action dir: $ROOT"
         echo "root=$ROOT" >> "$GITHUB_OUTPUT"
 
+    - name: Generate tests.csv for FlakyDoctor
+      shell: bash
+      env:
+        SRC_PATH: src/test/java
+      run: |
+        set -euo pipefail
+
+        ROOT="${{ steps.locate.outputs.root }}"
+        ACTION_DIR="$ROOT"
+        export ACTION_DIR SRC_PATH
+
+        echo "Generating tests.csv in $ACTION_DIR"
+
+        python3 "$GITHUB_WORKSPACE/.github/workflow-scripts/generate_tests_csv.py"
+
     - name: Make workspace alias for script
       shell: bash
       run: |
@@ -45,6 +60,20 @@ runs:
         mkdir -p "$(dirname "$TARGET")"
         ln -s "$ROOT" "$TARGET"
         ls -la "$TARGET/FlakyDoctor/src" || true
+
+    - name: Generate tests.csv for FlakyDoctor
+      shell: bash
+      env:
+        SRC_PATH: src/test/java
+      run: |
+        set -euo pipefail
+        ROOT="${{ steps.locate.outputs.root }}"
+
+        echo "Generating tests.csv in $ROOT"
+        ACTION_DIR="$ROOT"
+        export ACTION_DIR SRC_PATH
+
+        python3 "$GITHUB_WORKSPACE/.github/workflow-scripts/generate_tests_csv.py"
 
     - name: Run CICD FlakyDoctor
       shell: bash
