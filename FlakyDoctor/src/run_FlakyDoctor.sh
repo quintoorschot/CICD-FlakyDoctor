@@ -15,7 +15,7 @@ echo "Running... Please refer to the results in ${DIR}"
 
 exec 3>&1 4>&2
 trap $(exec 2>&4 1>&3) 0 1 2 3
-exec 1>${DIR}/${TimeStamp}.log 2>&1
+#exec 1>${DIR}/${TimeStamp}.log 2>&1
 
 echo "* "STARTING at $(date) 
 echo "* "REPO VERSION $(git rev-parse HEAD)
