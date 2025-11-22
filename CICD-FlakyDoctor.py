@@ -42,7 +42,6 @@ if __name__ == "__main__":
     #      
     #   print(m.name, "start:", getattr(m, "start_position", None), "end:", getattr(m, "end_position", None))
 
-    print("hello!!")
     try:
         subprocess.run(
             ["bash", str(flakydoctor_path),

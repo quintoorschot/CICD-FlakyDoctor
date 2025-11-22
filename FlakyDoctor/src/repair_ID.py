@@ -77,6 +77,7 @@ def main(pr_csv, projects_dir, details_csv, model, nondex_times, result_csv, res
             if "Project URL" in line or "project_url" in line or "project" in line:
                 continue
             project, sha, module, test, test_type, status, pr, notes = line[0], line[1], line[2], line[3], line[4], line[5], line[6], line[7]
+            print(f"[Analyzing Test] {project} | {sha} | {module} | {test}")
             project_name = project.split("/")[-1]
             tag = "{}#{}#{}#{}".format(project, sha, module, test)
             test_class = ".".join(test.split(".")[:-1])
